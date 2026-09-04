@@ -10,6 +10,7 @@ const _methodChannel = MethodChannel('main-delegate-channel');
 Future<void> setupStatusBar() async {
   await _methodChannel.invokeMethod('setupStatusBar', {
     'open': t.tray.open,
+    'sendClipboard': t.tray.sendClipboard,
     'quit': t.tray.close,
   });
 }

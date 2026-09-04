@@ -209,6 +209,7 @@
   "deviceDetailsPage": {
     "title": "Détails de l'appareil",
     "favorite": "Favori",
+    "quickSendTarget": "Cible d'envoi rapide",
     "verify": "Vérifier",
     "info": {
       "name": "Nom",
@@ -458,6 +459,7 @@
   "tray": {
     "@info": "Les directives d'Apple sont très strictes en ce qui concerne le terme \"fermer\".",
     "open": "@:general.open",
+    "sendClipboard": "Envoyer le presse-papiers",
     "close": "Quitter LocalSend",
     "closeWindows": "Fermer"
   },

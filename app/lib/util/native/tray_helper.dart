@@ -14,6 +14,7 @@ final _logger = Logger('TrayHelper');
 
 enum TrayEntry {
   open,
+  sendClipboard,
   close,
 }
 
@@ -45,6 +46,10 @@ Future<void> initTray() async {
       tm.MenuItem(
         key: TrayEntry.open.name,
         label: t.tray.open,
+      ),
+      tm.MenuItem(
+        key: TrayEntry.sendClipboard.name,
+        label: t.tray.sendClipboard,
       ),
       tm.MenuItem(
         key: TrayEntry.close.name,

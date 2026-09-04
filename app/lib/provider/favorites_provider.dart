@@ -73,6 +73,9 @@ class RemoveFavoriteAction extends AsyncReduxAction<FavoritesService, List<Favor
       // Unknown device
       return state;
     }
+    if (notifier._persistence.getQuickSendFavorite() == state[index].id) {
+      await notifier._persistence.setQuickSendFavorite(null);
+    }
     final updated = List<FavoriteDevice>.unmodifiable(
       <FavoriteDevice>[
         ...state,
@@ -80,5 +83,19 @@ class RemoveFavoriteAction extends AsyncReduxAction<FavoritesService, List<Favor
     );
     await notifier._persistence.setFavorites(updated);
     return updated;
+  }
+}
+
+class SetQuickSendFavoriteAction extends AsyncReduxAction<FavoritesService, List<FavoriteDevice>> {
+  final String? favoriteId;
+
+  SetQuickSendFavoriteAction(this.favoriteId);
+
+  @override
+  Future<List<FavoriteDevice>> reduce() async {
+    if (favoriteId == null || state.any((favorite) => favorite.id == favoriteId)) {
+      await notifier._persistence.setQuickSendFavorite(favoriteId);
+    }
+    return state;
   }
 }

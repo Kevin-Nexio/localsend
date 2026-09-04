@@ -57,6 +57,7 @@ const _receiveHistory = 'ls_receive_history';
 
 // Favorites
 const _favorites = 'ls_favorites';
+const _quickSendFavorite = 'ls_quick_send_favorite';
 
 // App Window Offset and Size info
 const _windowOffsetX = 'ls_window_offset_x';
@@ -270,6 +271,18 @@ class PersistenceService {
   Future<void> setFavorites(List<FavoriteDevice> entries) async {
     final favoritesRaw = entries.map((entry) => jsonEncode(entry.toJson())).toList();
     await _prefs.setStringList(_favorites, favoritesRaw);
+  }
+
+  String? getQuickSendFavorite() {
+    return _prefs.getString(_quickSendFavorite);
+  }
+
+  Future<void> setQuickSendFavorite(String? favoriteId) async {
+    if (favoriteId == null) {
+      await _prefs.remove(_quickSendFavorite);
+    } else {
+      await _prefs.setString(_quickSendFavorite, favoriteId);
+    }
   }
 
   String getShowToken() {

@@ -401,6 +401,9 @@ class Translations$deviceDetailsPage$en {
   /// en: 'Favorite'
   String get favorite => 'Favorite';
 
+  /// en: 'Quick send target'
+  String get quickSendTarget => 'Quick send target';
+
   /// en: 'Verify'
   String get verify => 'Verify';
 
@@ -812,6 +815,9 @@ class Translations$tray$en {
 
   /// en: 'Open'
   String get open => _root.general.open;
+
+  /// en: 'Send clipboard'
+  String get sendClipboard => 'Send clipboard';
 
   /// en: 'Quit LocalSend'
   String get close => 'Quit LocalSend';

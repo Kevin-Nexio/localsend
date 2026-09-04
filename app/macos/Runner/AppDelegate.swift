@@ -77,13 +77,17 @@ class AppDelegate: FlutterAppDelegate {
             image!.size = NSSize(width: 18, height: 18)
             image!.isTemplate = true
             button.image = image
-            
+
             let menu = NSMenu()
-            
+
             let openString = i18n["open"]!
             let openItem = NSMenuItem(title: openString, action: #selector(showLocalSendFromMenuBar), keyEquivalent: "o")
             menu.addItem(openItem)
             
+            let sendClipboardString = i18n["sendClipboard"]!
+            let sendClipboardItem = NSMenuItem(title: sendClipboardString, action: #selector(sendClipboardFromMenuBar), keyEquivalent: "v")
+            menu.addItem(sendClipboardItem)
+
             let quitString = i18n["quit"]!
             let quitItem = NSMenuItem(title: quitString, action: #selector(quitApp), keyEquivalent: "q")
             menu.addItem(quitItem)
@@ -102,11 +106,16 @@ class AppDelegate: FlutterAppDelegate {
             ])
         }
     }
-    
+
     @objc func showLocalSendFromMenuBar() {
         channel?.invokeMethod("showLocalSendFromMenuBar", arguments: nil)
     }
-    
+
+    @objc func sendClipboardFromMenuBar() {
+        guard let string = NSPasteboard.general.string(forType: .string) else { return }
+        Defaults[.pendingStrings].append(string)
+    }
+
     @objc private func quitApp() {
         NSApp.terminate(nil)
     }
@@ -132,7 +141,6 @@ class AppDelegate: FlutterAppDelegate {
         Defaults[.pendingFiles] = []
         Defaults[.pendingStrings] = []
         
-        self.showLocalSendFromMenuBar()
     }
     
     // START: handle opened files

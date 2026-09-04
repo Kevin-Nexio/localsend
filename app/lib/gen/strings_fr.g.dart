@@ -358,6 +358,8 @@ class _Translations$deviceDetailsPage$fr extends Translations$deviceDetailsPage$
   @override
   String get favorite => 'Favori';
   @override
+  String get quickSendTarget => 'Cible d\'envoi rapide';
+  @override
   String get verify => 'Vérifier';
   @override
   late final _Translations$deviceDetailsPage$info$fr info = _Translations$deviceDetailsPage$info$fr._(_root);
@@ -660,6 +662,8 @@ class _Translations$tray$fr extends Translations$tray$en {
   // Translations
   @override
   String get open => _root.general.open;
+  @override
+  String get sendClipboard => 'Envoyer le presse-papiers';
   @override
   String get close => 'Quitter LocalSend';
   @override

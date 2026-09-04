@@ -209,6 +209,7 @@
   "deviceDetailsPage": {
     "title": "Device Details",
     "favorite": "Favorite",
+    "quickSendTarget": "Quick send target",
     "verify": "Verify",
     "info": {
       "name": "Name",
@@ -528,6 +529,7 @@
   "tray": {
     "@info": "Apple Guidelines are very strict about the \"close\" wording.",
     "open": "@:general.open",
+    "sendClipboard": "Send clipboard",
     "close": "Quit LocalSend",
     "closeWindows": "Exit"
   },

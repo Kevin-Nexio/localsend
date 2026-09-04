@@ -5,6 +5,7 @@ import 'package:localsend_app/model/persistence/favorite_device.dart';
 import 'package:localsend_app/provider/device_info_provider.dart';
 import 'package:localsend_app/provider/favorites_provider.dart';
 import 'package:localsend_app/provider/http_provider.dart';
+import 'package:localsend_app/provider/persistence_provider.dart';
 import 'package:localsend_app/provider/settings_provider.dart';
 import 'package:localsend_app/widget/dialogs/error_dialog.dart';
 import 'package:localsend_app/widget/dialogs/favorite_delete_dialog.dart';
@@ -33,6 +34,7 @@ class _FavoriteEditDialogState extends State<FavoriteEditDialog> with Refena {
   final _portController = TextEditingController();
   final _aliasController = TextEditingController();
   bool _fetching = false;
+  bool _quickSendTarget = false;
   String? _error;
 
   @override
@@ -45,6 +47,7 @@ class _FavoriteEditDialogState extends State<FavoriteEditDialog> with Refena {
     ensureRef((ref) {
       _portController.text =
           widget.prefilledDevice?.port.toString() ?? widget.favorite?.port.toString() ?? ref.read(settingsProvider).port.toString();
+      _quickSendTarget = widget.favorite != null && ref.read(persistenceProvider).getQuickSendFavorite() == widget.favorite!.id;
     });
   }
 
@@ -93,6 +96,19 @@ class _FavoriteEditDialogState extends State<FavoriteEditDialog> with Refena {
             ),
             if (widget.favorite != null) ...[
               const SizedBox(height: 16),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(t.deviceDetailsPage.quickSendTarget),
+                value: _quickSendTarget,
+                onChanged: _fetching
+                    ? null
+                    : (value) {
+                        setState(() {
+                          _quickSendTarget = value;
+                        });
+                      },
+              ),
+              const SizedBox(height: 8),
               TextButton.icon(
                 style: TextButton.styleFrom(
                   foregroundColor: Theme.of(context).colorScheme.warning,
@@ -178,6 +194,10 @@ class _FavoriteEditDialogState extends State<FavoriteEditDialog> with Refena {
                             ),
                           ),
                         );
+                    final currentQuickSendFavorite = ref.read(persistenceProvider).getQuickSendFavorite();
+                    if (_quickSendTarget || currentQuickSendFavorite == existingFavorite.id) {
+                      await ref.redux(favoritesProvider).dispatchAsync(SetQuickSendFavoriteAction(_quickSendTarget ? existingFavorite.id : null));
+                    }
                   } else {
                     // Add new favorite
                     final ip = _ipController.text;

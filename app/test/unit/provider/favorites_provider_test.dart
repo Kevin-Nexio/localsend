@@ -7,10 +7,10 @@ import 'package:test/test.dart';
 import '../../mocks.mocks.dart';
 
 void main() {
-  late MockPersistenceService persistenceService;
+  late _QuickSendMockPersistenceService persistenceService;
 
   setUp(() {
-    persistenceService = MockPersistenceService();
+    persistenceService = _QuickSendMockPersistenceService();
   });
 
   test('Should add a favorite device', () async {
@@ -82,6 +82,32 @@ void main() {
     verify(persistenceService.setFavorites([]));
   });
 
+  test('Should clear quick send target when deleting the selected favorite device', () async {
+    final initialDevice = _createDevice('1', fingerprint: '111');
+    final service = ReduxNotifier.test(
+      redux: FavoritesService(persistenceService),
+      initialState: [initialDevice],
+    );
+    persistenceService.quickSendFavorite = '1';
+
+    await service.dispatchAsync(RemoveFavoriteAction(deviceFingerprint: '111'));
+
+    expect(persistenceService.quickSendFavorite, null);
+    verify(persistenceService.setFavorites([]));
+  });
+
+  test('Should set quick send target if favorite exists', () async {
+    final initialDevice = _createDevice('1');
+    final service = ReduxNotifier.test(
+      redux: FavoritesService(persistenceService),
+      initialState: [initialDevice],
+    );
+
+    await service.dispatchAsync(SetQuickSendFavoriteAction('1'));
+
+    expect(persistenceService.quickSendFavorite, '1');
+  });
+
   test('Should not delete favorite device if unknown fingerprint', () async {
     final initialDevice = _createDevice('1', fingerprint: '111');
     final service = ReduxNotifier.test(
@@ -97,6 +123,18 @@ void main() {
     expect(service.state, [initialDevice]);
     verifyNever(persistenceService.setFavorites(any));
   });
+}
+
+class _QuickSendMockPersistenceService extends MockPersistenceService {
+  String? quickSendFavorite;
+
+  @override
+  String? getQuickSendFavorite() => quickSendFavorite;
+
+  @override
+  Future<void> setQuickSendFavorite(String? favoriteId) async {
+    quickSendFavorite = favoriteId;
+  }
 }
 
 FavoriteDevice _createDevice(

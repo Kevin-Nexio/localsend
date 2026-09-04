@@ -21,6 +21,7 @@ import 'package:localsend_app/provider/persistence_provider.dart';
 // [FOSS_REMOVE_START]
 import 'package:localsend_app/provider/purchase_provider.dart';
 // [FOSS_REMOVE_END]
+import 'package:localsend_app/provider/quick_send_provider.dart';
 import 'package:localsend_app/provider/selection/selected_sending_files_provider.dart';
 import 'package:localsend_app/provider/settings_provider.dart';
 import 'package:localsend_app/provider/tv_provider.dart';
@@ -227,18 +228,37 @@ Future<void> postInit(BuildContext context, Ref ref, bool appStart) async {
     if (defaultTargetPlatform == TargetPlatform.macOS) {
       // handle dropped files
       pendingFilesStream.listen((files) async {
+        final previousCount = ref.read(selectedSendingFilesProvider).length;
         await ref.global.dispatchAsync(
           _HandleAppStartArgumentsAction(
             args: files,
           ),
         );
+        final selection = ref.read(selectedSendingFilesProvider);
+        if (selection.length <= previousCount) {
+          return;
+        }
+        final sent = await sendToQuickTarget(ref: ref, files: selection.sublist(previousCount));
+        if (sent) {
+          return;
+        }
+        await showFromTray();
       });
 
       // handle dropped strings
-      pendingStringsStream.listen((pendingStrings) {
+      pendingStringsStream.listen((pendingStrings) async {
+        final previousCount = ref.read(selectedSendingFilesProvider).length;
         for (final string in pendingStrings) {
           ref.redux(selectedSendingFilesProvider).dispatch(AddMessageAction(message: string));
         }
+        final selection = ref.read(selectedSendingFilesProvider);
+        if (selection.length > previousCount) {
+          final sent = await sendToQuickTarget(ref: ref, files: selection.sublist(previousCount));
+          if (sent) {
+            return;
+          }
+        }
+        await showFromTray();
         ref.redux(homePageControllerProvider).dispatch(ChangeTabAction(HomeTab.send));
       });
 

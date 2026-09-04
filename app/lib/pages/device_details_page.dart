@@ -4,6 +4,7 @@ import 'package:localsend_app/gen/strings.g.dart';
 import 'package:localsend_app/model/persistence/favorite_device.dart';
 import 'package:localsend_app/pages/verify_page.dart';
 import 'package:localsend_app/provider/favorites_provider.dart';
+import 'package:localsend_app/provider/persistence_provider.dart';
 import 'package:localsend_app/util/favorites.dart';
 import 'package:localsend_app/widget/big_button.dart';
 import 'package:localsend_app/widget/dialogs/favorite_delete_dialog.dart';
@@ -61,10 +62,16 @@ class _DeviceDetailsPageState extends State<DeviceDetailsPage> with Refena {
     }
   }
 
+  Future<void> _toggleQuickSendTarget(FavoriteDevice favoriteEntry, bool isQuickSendTarget) async {
+    await ref.redux(favoritesProvider).dispatchAsync(SetQuickSendFavoriteAction(isQuickSendTarget ? null : favoriteEntry.id));
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final device = widget.device;
     final favoriteEntry = ref.watch(favoritesProvider).findDevice(device);
+    final isQuickSendTarget = favoriteEntry != null && ref.read(persistenceProvider).getQuickSendFavorite() == favoriteEntry.id;
     return Scaffold(
       appBar: AppBar(
         title: Text(t.deviceDetailsPage.title),
@@ -72,8 +79,10 @@ class _DeviceDetailsPageState extends State<DeviceDetailsPage> with Refena {
       body: ResponsiveListView(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 20,
+            runSpacing: 12,
             children: [
               BigButton(
                 icon: favoriteEntry != null ? Icons.favorite : Icons.favorite_border,
@@ -82,7 +91,6 @@ class _DeviceDetailsPageState extends State<DeviceDetailsPage> with Refena {
                 width: 120,
                 onTap: () async => await _toggleFavorite(favoriteEntry),
               ),
-              const SizedBox(width: 20),
               BigButton(
                 icon: Icons.verified_user,
                 label: t.deviceDetailsPage.verify,
@@ -94,6 +102,14 @@ class _DeviceDetailsPageState extends State<DeviceDetailsPage> with Refena {
                   ),
                 ),
               ),
+              if (favoriteEntry != null)
+                BigButton(
+                  icon: isQuickSendTarget ? Icons.bolt : Icons.bolt_outlined,
+                  label: t.deviceDetailsPage.quickSendTarget,
+                  filled: isQuickSendTarget,
+                  width: 120,
+                  onTap: () async => await _toggleQuickSendTarget(favoriteEntry, isQuickSendTarget),
+                ),
             ],
           ),
           const SizedBox(height: 30),
