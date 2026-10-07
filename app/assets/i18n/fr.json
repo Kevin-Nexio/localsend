@@ -347,6 +347,8 @@
     },
     "addressInput": {
       "title": "Entrez l'adresse IP",
+      "hashtag": "Hashtag",
+      "ip": "Adresse IP",
       "recentlyUsed": "Récemment utilisé : "
     },
     "cancelSession": {

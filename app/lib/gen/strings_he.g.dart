@@ -863,6 +863,10 @@ class _Translations$settingsTab$general$he extends Translations$settingsTab$gene
   @override
   String get saveWindowPlacementWindows => 'שמור את מיקום החלון בעת יציאה';
   @override
+  String get alwaysOnTop => 'הצג תמיד מעל חלונות אחרים';
+  @override
+  String get alwaysOnTopUnavailable => 'לא נתמך ב־Wayland';
+  @override
   String get minimizeToTray => 'יציאה: מזעור למגש';
   @override
   String get launchAtStartup => 'הפעלה אוטומטית לאחר הכניסה';
@@ -1165,6 +1169,10 @@ class _Translations$dialogs$addressInput$he extends Translations$dialogs$address
   // Translations
   @override
   String get title => 'הכנס כתובת';
+  @override
+  String get hashtag => 'סולמית';
+  @override
+  String get ip => 'כתובת ה-IP';
   @override
   String get recentlyUsed => 'בשימוש לאחרונה: ';
 }
